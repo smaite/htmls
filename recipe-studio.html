@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Recipe Writing Studio — The Grammar Press</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------- Tokens (same system as the rest of the Press) ---------- */
+:root {
+  --paper: #F5F1E6;
+  --surface: #FDFBF4;
+  --ink: #262218;
+  --muted: #6E6654;
+  --line: #E5DDC8;
+  --line-2: #CCC0A2;
+  --accent: #A63D18;
+  --accent-dark: #8C3413;
+  --accent-soft: #F2E3D8;
+  --blue: #3A5A6E;
+  --blue-soft: #E8EDF0;
+  --good: #2F6B44;
+  --bad: #A63A28;
+  --sand: #F8F2DE;
+  --sand-line: #E0D4AE;
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --radius: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+[id] { scroll-margin-top: 84px; }
+
+body {
+  font: 400 16px/1.65 var(--sans);
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(rgba(38, 34, 24, 0.05) 1px, transparent 0);
+  background-size: 26px 26px;
+}
+::selection { background: var(--accent); color: var(--paper); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.container { max-width: 1060px; margin: 0 auto; padding: 0 22px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+strong { font-weight: 650; }
+.muted { color: var(--muted); font-weight: 400; }
+.ilink { color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+.ilink:hover { text-decoration-color: var(--accent); }
+
+/* ---------- Nav ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(245, 241, 230, 0.94);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.progress { position: absolute; top: 0; left: 0; height: 2px; width: 0; background: var(--accent); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 58px; }
+.brand { display: flex; align-items: center; gap: 9px; text-decoration: none; color: var(--ink); font-weight: 650; font-size: 14.5px; }
+.brand-mark { font-family: var(--serif); font-size: 21px; color: var(--accent); line-height: 1; }
+.nav-links { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.nav-links::-webkit-scrollbar { display: none; }
+.nav-link {
+  font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; padding: 7px 11px; border-radius: 6px;
+  white-space: nowrap; transition: color .15s, background .15s;
+}
+.nav-link:hover { color: var(--ink); background: rgba(38, 34, 24, 0.05); }
+.nav-link.active { color: var(--accent); background: var(--accent-soft); }
+
+/* ---------- Hero ---------- */
+.hero { padding: 64px 0 44px; }
+.hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 44px; align-items: center; }
+.eyebrow {
+  font: 500 11px var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 18px; display: flex; align-items: center; gap: 12px;
+}
+.eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--accent); }
+.hero h1 {
+  font-family: var(--serif); font-weight: 560; font-size: clamp(2.3rem, 5.5vw, 3.7rem);
+  line-height: 1.07; letter-spacing: -0.015em; margin-bottom: 18px;
+}
+.hero h1 em { color: var(--accent); font-weight: 480; }
+.hero-sub { max-width: 32em; color: var(--muted); font-size: 1.06rem; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 0; margin-top: 26px; font: 500 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.hero-meta span + span::before { content: "·"; margin: 0 12px; color: var(--line-2); }
+.hero-fig { width: 168px; flex: none; transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+.hero:hover .hero-fig { transform: rotate(-6deg); }
+
+/* ---------- Sheets ---------- */
+main { padding-bottom: 6px; }
+.sheet {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: clamp(24px, 4.5vw, 46px);
+  margin-bottom: 26px;
+  box-shadow: 0 1px 0 rgba(38, 34, 24, 0.02), 0 18px 40px -34px rgba(38, 34, 24, 0.35);
+}
+.sec-head { margin-bottom: 24px; }
+.kicker {
+  font: 500 11px var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--accent); display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+}
+.kicker::before { content: ""; width: 26px; height: 1px; background: var(--accent); }
+.sec-head h2 { font-family: var(--serif); font-weight: 580; font-size: clamp(1.55rem, 3vw, 2.05rem); line-height: 1.15; letter-spacing: -0.01em; }
+.sec-intro { color: var(--muted); max-width: 42em; }
+
+/* ---------- Callouts ---------- */
+.callout {
+  display: grid; grid-template-columns: 128px 1fr; gap: 18px;
+  background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px; margin: 22px 0;
+}
+.callout-k { font: 500 10.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding-top: 4px; line-height: 1.5; }
+.callout.tip { border-left-color: var(--good); }
+.callout.tip .callout-k { color: var(--good); }
+
+/* ---------- Principle cards ---------- */
+.principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin: 24px 0 10px; }
+.principle { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 20px; transition: border-color .2s, background .2s; }
+.principle:hover { border-color: var(--line-2); background: #FFFEFA; }
+.principle .no { font: 500 11px var(--mono); letter-spacing: 0.1em; color: var(--accent); }
+.principle h3 { font-family: var(--serif); font-weight: 580; font-size: 1.12rem; margin: 8px 0; }
+.principle p { color: var(--muted); font-size: 0.93rem; line-height: 1.6; }
+
+/* ---------- Lists & steps ---------- */
+.list { list-style: none; margin: 8px 0 14px; }
+.list li { position: relative; padding-left: 24px; margin: 6px 0; }
+.list-dash li::before { content: "–"; position: absolute; left: 2px; font-family: var(--mono); color: var(--accent); }
+.list li:last-child { margin-bottom: 0; }
+
+ol.steps { list-style: none; counter-reset: step; margin: 16px 0; }
+ol.steps li { counter-increment: step; position: relative; padding-left: 42px; margin: 12px 0; }
+ol.steps li::before {
+  content: counter(step);
+  position: absolute; left: 0; top: 1px;
+  width: 27px; height: 27px; line-height: 25px; text-align: center;
+  font: 500 12px var(--mono); color: var(--accent);
+  border: 1px solid var(--line-2); border-radius: 50%; background: var(--surface);
+}
+ol.steps li:last-child { margin-bottom: 0; }
+.lead-k { font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 14px 0 4px; }
+
+/* ---------- Models toolbar ---------- */
+.models-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 18px; margin-bottom: 22px; }
+.seg { display: flex; flex-wrap: wrap; border: 1px solid var(--ink); border-radius: var(--radius); overflow: hidden; background: var(--surface); max-width: 560px; }
+.seg-btn {
+  flex: 1 1 auto; appearance: none; background: none; border: 0; cursor: pointer;
+  font: 600 0.9rem var(--sans); color: var(--muted); padding: 12px 16px;
+  border-right: 1px solid var(--line-2); transition: background .15s, color .15s; white-space: nowrap;
+}
+.seg-btn:last-child { border-right: 0; }
+.seg-btn:hover { background: rgba(38, 34, 24, 0.04); color: var(--ink); }
+.seg-btn.active { background: var(--ink); color: var(--paper); }
+
+.switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+.switch input {
+  appearance: none; -webkit-appearance: none;
+  width: 34px; height: 20px; border-radius: 999px; background: var(--line-2);
+  position: relative; cursor: pointer; transition: background .2s; flex: none;
+}
+.switch input::after {
+  content: ""; position: absolute; top: 3px; left: 3px;
+  width: 14px; height: 14px; border-radius: 50%; background: var(--surface);
+  transition: left .2s;
+}
+.switch input:checked { background: var(--good); }
+.switch input:checked::after { left: 17px; }
+.switch .lbl { font: 500 11px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+.legend { display: flex; gap: 8px; margin-left: auto; }
+.lg { font: 500 10px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 9px; border-radius: 5px; }
+.lg-seq { background: var(--blue-soft); color: var(--blue); }
+.lg-verb { background: var(--accent-soft); color: var(--accent-dark); }
+
+.example-panel { display: none; }
+.example-panel.show { display: block; animation: reveal .35s ease; }
+@keyframes reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Recipe cards ---------- */
+.recipe-card { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.rc-head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 14px;
+  padding: 16px 22px 14px; border-bottom: 1px solid var(--sand-line); background: var(--sand);
+}
+.rc-head h3 { font-family: var(--serif); font-weight: 580; font-size: 1.45rem; }
+.rc-meta { font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.rc-body { display: grid; grid-template-columns: 290px 1fr; gap: 10px 34px; padding: 20px 22px 18px; }
+.rc-ing .list li { margin: 8px 0; }
+.qty { font: 500 0.82em var(--mono); color: var(--accent-dark); }
+
+/* Annotations: plain text until switched on */
+#models .seq { font-style: normal; }
+#models .verb { font-weight: inherit; }
+#models.annotated .seq {
+  font: 500 0.78em var(--mono); letter-spacing: 0.02em;
+  color: var(--blue); background: var(--blue-soft);
+  padding: 1px 6px 2px; border-radius: 5px; margin: 0 1px;
+}
+#models.annotated .verb {
+  color: var(--accent-dark); background: var(--accent-soft);
+  box-shadow: inset 0 -2px 0 var(--accent);
+  padding: 0 3px; border-radius: 3px 3px 0 0; margin: 0 1px;
+}
+
+/* ---------- Practice ---------- */
+.topics { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 6px; }
+.topic {
+  appearance: none; background: var(--surface); border: 1px solid var(--line-2); border-radius: 999px;
+  padding: 9px 18px; font: 600 0.92rem var(--sans); color: var(--ink); cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.topic:hover { border-color: var(--ink); }
+.topic.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.reqs { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 20px; }
+.req { font: 500 10.5px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border: 1px dashed var(--line-2); border-radius: 6px; padding: 5px 10px; }
+
+/* ---------- Checklist ---------- */
+.checklist { background: var(--sand); border: 1px solid var(--sand-line); border-radius: var(--radius); padding: 8px 22px 14px; margin: 24px 0 10px; }
+.checklist h3 {
+  font-family: var(--serif); font-weight: 580; font-size: 1.22rem;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 14px 0 10px; border-bottom: 1px solid var(--sand-line);
+}
+.checklist .count { font: 500 11px var(--mono); letter-spacing: 0.08em; color: var(--muted); }
+.check { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; cursor: pointer; border-bottom: 1px solid rgba(224, 212, 174, 0.55); }
+.check:last-of-type { border-bottom: 0; }
+.check input {
+  appearance: none; -webkit-appearance: none;
+  width: 18px; height: 18px; flex: none; margin-top: 3px; cursor: pointer;
+  border: 1.5px solid var(--line-2); border-radius: 5px; background: var(--surface);
+  position: relative; transition: background .15s, border-color .15s;
+}
+.check input:checked { background: var(--accent); border-color: var(--accent); }
+.check input:checked::after {
+  content: ""; position: absolute; left: 5px; top: 2px;
+  width: 4px; height: 8px; border: solid var(--paper); border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.check input:checked + span { color: var(--muted); }
+
+/* ---------- Drafting bench ---------- */
+.bench-topic { font: 500 11px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.bench-topic strong { color: var(--ink); }
+.bench-topic strong.muted { color: var(--muted); font-weight: 500; }
+
+.bench { display: grid; grid-template-columns: 1fr 300px; gap: 18px; align-items: start; }
+#draft {
+  width: 100%; min-height: 380px; resize: vertical;
+  font-family: var(--serif); font-size: 1rem; line-height: 1.85; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--radius);
+  padding: 18px 20px; transition: border-color .15s, box-shadow .15s;
+}
+#draft:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.bench-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 10px; }
+.autosave { font: 500 10.5px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.btn-clear {
+  appearance: none; background: none; border: 1px solid var(--line-2); border-radius: 7px;
+  padding: 6px 13px; font: 600 12px var(--sans); color: var(--muted); cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.btn-clear:hover { color: var(--bad); border-color: var(--bad); }
+.btn-clear.armed { background: var(--bad); border-color: var(--bad); color: #fff; }
+
+.bench-side { display: flex; flex-direction: column; gap: 12px; }
+.b-stat { border: 1px solid var(--line); border-radius: var(--radius); padding: 13px 15px; background: var(--surface); }
+.b-stat .k { display: block; font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.b-stat .v { font-family: var(--serif); font-weight: 580; font-size: 1.45rem; line-height: 1.1; }
+.b-stat .v small { font-size: 1rem; font-weight: 480; color: var(--muted); }
+.b-sub { display: block; font-size: 0.83rem; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+
+.meter { position: relative; height: 7px; border-radius: 4px; background: var(--line); overflow: hidden; margin-top: 10px; }
+.meter-zone { position: absolute; left: 80%; width: 20%; top: 0; bottom: 0; background: rgba(47, 107, 68, 0.18); border-left: 1px solid rgba(47, 107, 68, 0.45); border-right: 1px solid rgba(47, 107, 68, 0.45); }
+.meter-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--accent); transition: width .25s ease, background .25s; }
+.meter-fill.in { background: var(--good); }
+.meter-fill.over { background: var(--bad); }
+.band { display: block; font: 500 10.5px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-top: 7px; }
+.band.ok { color: var(--good); }
+.band.bad { color: var(--bad); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip {
+  font: 500 10px var(--mono); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--line-2); border-radius: 6px; padding: 4px 9px;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.chip.on { background: var(--blue-soft); color: var(--blue); border-color: rgba(58, 90, 110, 0.4); }
+
+.b-verdict {
+  border: 1px solid var(--line); border-left: 3px solid var(--line-2);
+  border-radius: 0 var(--radius) var(--radius) 0; padding: 13px 15px;
+  font-size: 0.88rem; color: var(--muted); min-height: 76px; line-height: 1.55;
+}
+.b-verdict.ok { border-left-color: var(--good); color: var(--good); }
+.b-verdict.warn { border-left-color: var(--bad); color: var(--bad); }
+.b-verdict ul { list-style: none; }
+.b-verdict li { margin: 5px 0; padding-left: 16px; position: relative; }
+.b-verdict li::before { content: "–"; position: absolute; left: 0; font-family: var(--mono); }
+
+.bench-note { font: 400 0.8rem/1.5 var(--sans); color: var(--muted); margin-top: 14px; max-width: 46em; }
+
+/* ---------- Footer ---------- */
+.footer { border-top: 1px solid var(--line); margin-top: 18px; background: var(--paper); }
+.footer-inner {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  padding: 26px 22px 34px; font: 400 13.5px var(--sans); color: var(--muted);
+}
+.footer-inner strong { color: var(--ink); }
+.footer-tag { font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 14px);
+  opacity: 0; background: var(--ink); color: var(--paper);
+  padding: 12px 18px; border-radius: 8px;
+  font: 500 13.5px var(--sans); max-width: min(92vw, 460px); text-align: center;
+  pointer-events: none; z-index: 100;
+  transition: transform .3s cubic-bezier(.2, .8, .2, 1), opacity .3s;
+}
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 30px; }
+  .hero-fig { width: 126px; }
+  .bench { grid-template-columns: 1fr; }
+  .rc-body { grid-template-columns: 1fr; gap: 4px; }
+  .callout { grid-template-columns: 1fr; gap: 8px; }
+  .callout-k { padding-top: 0; }
+  .legend { margin-left: 0; }
+}
+@media (max-width: 640px) {
+  .brand span:last-child { display: none; }
+  .hero { padding: 46px 0 34px; }
+  .sheet { padding: 22px 18px; }
+  .seg-btn { flex: 1 1 46%; }
+  .rc-head { flex-direction: column; gap: 4px; }
+  .footer-inner { flex-direction: column; gap: 6px; }
+}
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="progress" id="progress"></div>
+  <div class="container nav-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">§</span><span>The Grammar Press</span></a>
+    <div class="nav-links">
+      <a class="nav-link" href="#craft">Craft</a>
+      <a class="nav-link" href="#models">Models</a>
+      <a class="nav-link" href="#practice">Practice</a>
+      <a class="nav-link" href="#bench">Bench</a>
+      <a class="nav-link" href="index.html">Course home</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="container hero-grid">
+    <div>
+      <p class="eyebrow">The Grammar Press · Advanced studio</p>
+      <h1>Recipe Writing <em>Studio</em></h1>
+      <p class="hero-sub">Where procedural writing meets precision, clarity, and professional presentation. Designed for senior secondary learners who aim beyond exams.</p>
+      <div class="hero-meta">
+        <span>04 model recipes</span>
+        <span>05 practice topics</span>
+        <span>01 live draft checker</span>
+      </div>
+    </div>
+    <!-- Saucepan, in the same line-art family as the compass and the pen nib -->
+    <svg class="hero-fig" viewBox="0 0 132 132" aria-hidden="true">
+      <circle cx="66" cy="66" r="62" fill="none" stroke="#CCC0A2" stroke-width="1.5"/>
+      <circle cx="66" cy="66" r="54" fill="none" stroke="#6E6654" stroke-width="1" stroke-dasharray="1 12"/>
+      <path d="M50 44 c 5 -5 -5 -11 0 -16" fill="none" stroke="#A63D18" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M66 40 c 5 -5 -5 -11 0 -16" fill="none" stroke="#A63D18" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M82 44 c 5 -5 -5 -11 0 -16" fill="none" stroke="#A63D18" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M40 54 L40 96 Q40 106 50 106 L82 106 Q92 106 92 96 L92 54 Z" fill="#FDFBF4" stroke="#262218" stroke-width="1.5"/>
+      <path d="M33 54 L99 54" stroke="#262218" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M33 54 q -5 6 0 11" fill="none" stroke="#262218" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M99 54 q 5 6 0 11" fill="none" stroke="#262218" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ============ CHAPTER 01 ============ -->
+  <section class="sheet" id="craft">
+    <header class="sec-head">
+      <span class="kicker">Chapter 01 · The discipline</span>
+      <h2>Recipe Writing as a Craft</h2>
+    </header>
+
+    <p>At an advanced level, recipe writing is not merely about listing steps. It is a disciplined form of instructional writing that balances accuracy, sequencing, tone, and reader psychology.</p>
+    <p>A well-written recipe anticipates the reader's questions, eliminates ambiguity, and maintains logical flow. Every verb, quantity, and transition matters. The writer must sound confident, neutral, and precise — guiding the reader from preparation to presentation without confusion.</p>
+
+    <div class="principles">
+      <div class="principle">
+        <span class="no">01</span>
+        <h3>Clarity</h3>
+        <p>Every instruction can be acted on in exactly one way. If two readers could do it differently, rewrite it.</p>
+      </div>
+      <div class="principle">
+        <span class="no">02</span>
+        <h3>Sequence</h3>
+        <p>Each step follows a natural, practical order — the cook never needs anything before they have it.</p>
+      </div>
+      <div class="principle">
+        <span class="no">03</span>
+        <h3>Economy of Language</h3>
+        <p>No unnecessary words, and no missing logic. Cut what adds nothing; keep every link in the chain.</p>
+      </div>
+      <div class="principle">
+        <span class="no">04</span>
+        <h3>Consistency</h3>
+        <p>Uniform tense, tone, and measurement style — "1 tablespoon" throughout, never "1 tablespoon" then "two spoons".</p>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-k">Examiner's note</div>
+      <div>Advanced examiners look for control, not decoration. A recipe impresses through precision, not poetry.</div>
+    </div>
+  </section>
+
+  <!-- ============ CHAPTER 02 ============ -->
+  <section class="sheet" id="models">
+    <header class="sec-head">
+      <span class="kicker">Chapter 02 · The models</span>
+      <h2>Model Recipes, Examination Standard</h2>
+      <p class="sec-intro">Four model recipes — five steps each, sequenced with <strong>First, Next, Then, After that, Finally</strong>. Switch the annotations on to see the machinery; switch them off to see the clean version you would actually submit.</p>
+    </header>
+
+    <div id="models-wrap" class="annotated">
+      <div class="models-bar">
+        <div class="seg" role="group" aria-label="Model recipes">
+          <button class="seg-btn active" data-recipe="ex-grilled" aria-pressed="true">Grilled Cheese</button>
+          <button class="seg-btn" data-recipe="ex-soup" aria-pressed="false">Vegetable Soup</button>
+          <button class="seg-btn" data-recipe="ex-pancakes" aria-pressed="false">Simple Pancakes</button>
+          <button class="seg-btn" data-recipe="ex-eggs" aria-pressed="false">Boiled Eggs</button>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="annot-toggle" checked>
+          <span class="lbl">Annotations</span>
+        </label>
+        <div class="legend">
+          <span class="lg lg-seq">Sequencing word</span>
+          <span class="lg lg-verb">Imperative verb</span>
+        </div>
+      </div>
+
+      <div class="example-panel show" id="ex-grilled">
+        <article class="recipe-card">
+          <div class="rc-head">
+            <h3>Grilled Cheese Sandwich</h3>
+            <span class="rc-meta">05 steps · 05 sequencers</span>
+          </div>
+          <div class="rc-body">
+            <div class="rc-ing">
+              <p class="lead-k">Ingredients</p>
+              <ul class="list list-dash">
+                <li><span class="qty">2 slices</span> of bread</li>
+                <li><span class="qty">2 slices</span> of cheese</li>
+                <li><span class="qty">1 tablespoon</span> of butter</li>
+                <li><span class="qty">A pinch</span> of black pepper</li>
+              </ul>
+            </div>
+            <div>
+              <p class="lead-k">Method</p>
+              <ol class="steps">
+                <li><i class="seq">First</i>, <b class="verb">butter</b> one side of each bread slice evenly.</li>
+                <li><i class="seq">Next</i>, <b class="verb">place</b> a cheese slice between the unbuttered sides and <b class="verb">sprinkle</b> black pepper lightly.</li>
+                <li><i class="seq">Then</i>, <b class="verb">heat</b> a pan or grill over medium heat.</li>
+                <li><i class="seq">After that</i>, <b class="verb">grill</b> the sandwich until both sides turn golden brown.</li>
+                <li><i class="seq">Finally</i>, <b class="verb">remove</b> carefully and <b class="verb">serve</b> hot once the cheese has melted.</li>
+              </ol>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="example-panel" id="ex-soup">
+        <article class="recipe-card">
+          <div class="rc-head">
+            <h3>Vegetable Soup</h3>
+            <span class="rc-meta">05 steps · 05 sequencers</span>
+          </div>
+          <div class="rc-body">
+            <div class="rc-ing">
+              <p class="lead-k">Ingredients</p>
+              <ul class="list list-dash">
+                <li><span class="qty">1 cup</span> of chopped mixed vegetables</li>
+                <li><span class="qty">1 tablespoon</span> of butter</li>
+                <li><span class="qty">1 teaspoon</span> of garlic paste</li>
+                <li><span class="qty">3 cups</span> of water</li>
+                <li>Salt and pepper to taste</li>
+              </ul>
+            </div>
+            <div>
+              <p class="lead-k">Method</p>
+              <ol class="steps">
+                <li><i class="seq">First</i>, <b class="verb">heat</b> butter in a saucepan and <b class="verb">sauté</b> the garlic paste lightly.</li>
+                <li><i class="seq">Next</i>, <b class="verb">add</b> the chopped vegetables and <b class="verb">cook</b> for two minutes.</li>
+                <li><i class="seq">Then</i>, <b class="verb">pour</b> in the water and <b class="verb">bring</b> the mixture to a boil.</li>
+                <li><i class="seq">After that</i>, <b class="verb">reduce</b> the heat and <b class="verb">allow</b> it to simmer until the vegetables are soft.</li>
+                <li><i class="seq">Finally</i>, <b class="verb">season</b> with salt and pepper and <b class="verb">serve</b> hot.</li>
+              </ol>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="example-panel" id="ex-pancakes">
+        <article class="recipe-card">
+          <div class="rc-head">
+            <h3>Simple Pancakes</h3>
+            <span class="rc-meta">05 steps · 05 sequencers</span>
+          </div>
+          <div class="rc-body">
+            <div class="rc-ing">
+              <p class="lead-k">Ingredients</p>
+              <ul class="list list-dash">
+                <li><span class="qty">1 cup</span> of flour</li>
+                <li><span class="qty">1</span> egg</li>
+                <li><span class="qty">1 cup</span> of milk</li>
+                <li><span class="qty">1 teaspoon</span> of baking powder</li>
+                <li><span class="qty">2 tablespoons</span> of sugar</li>
+                <li>Oil for frying</li>
+              </ul>
+            </div>
+            <div>
+              <p class="lead-k">Method</p>
+              <ol class="steps">
+                <li><i class="seq">First</i>, <b class="verb">mix</b> flour, sugar, and baking powder in a bowl.</li>
+                <li><i class="seq">Next</i>, <b class="verb">add</b> the egg and milk gradually, stirring to form a smooth batter.</li>
+                <li><i class="seq">Then</i>, <b class="verb">heat</b> a lightly oiled pan over medium heat.</li>
+                <li><i class="seq">After that</i>, <b class="verb">pour</b> a ladle of batter onto the pan and <b class="verb">cook</b> until bubbles appear.</li>
+                <li><i class="seq">Finally</i>, <b class="verb">flip</b> the pancake, <b class="verb">cook</b> briefly, and <b class="verb">serve</b> warm.</li>
+              </ol>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="example-panel" id="ex-eggs">
+        <article class="recipe-card">
+          <div class="rc-head">
+            <h3>Boiled Eggs</h3>
+            <span class="rc-meta">05 steps · 05 sequencers</span>
+          </div>
+          <div class="rc-body">
+            <div class="rc-ing">
+              <p class="lead-k">Ingredients</p>
+              <ul class="list list-dash">
+                <li><span class="qty">2</span> eggs</li>
+                <li>Enough water to cover them completely</li>
+                <li><span class="qty">A pinch</span> of salt</li>
+              </ul>
+            </div>
+            <div>
+              <p class="lead-k">Method</p>
+              <ol class="steps">
+                <li><i class="seq">First</i>, <b class="verb">place</b> the eggs gently in a saucepan.</li>
+                <li><i class="seq">Next</i>, <b class="verb">add</b> enough water to cover the eggs completely.</li>
+                <li><i class="seq">Then</i>, <b class="verb">bring</b> the water to a boil over medium heat.</li>
+                <li><i class="seq">After that</i>, <b class="verb">continue</b> boiling for seven to eight minutes.</li>
+                <li><i class="seq">Finally</i>, <b class="verb">remove</b> the eggs, cool them, and peel before serving.</li>
+              </ol>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHAPTER 03 ============ -->
+  <section class="sheet" id="practice">
+    <header class="sec-head">
+      <span class="kicker">Chapter 03 · The assignment</span>
+      <h2>Practice Topics for Notebook Writing</h2>
+      <p class="sec-intro">Write any <strong>one</strong> of the following recipes. Aim for <strong>120–150 words</strong> in the same professional format and cohesive sequencing as the models above — or draft it on <a class="ilink" href="#bench">the bench below</a>, which counts words and checks your sequencing as you type.</p>
+    </header>
+
+    <div class="topics" role="group" aria-label="Practice topics">
+      <button class="topic" type="button" data-topic="Chicken Momo" aria-pressed="false">Chicken Momo</button>
+      <button class="topic" type="button" data-topic="Vegetable Chowmein" aria-pressed="false">Vegetable Chowmein</button>
+      <button class="topic" type="button" data-topic="Sel Roti" aria-pressed="false">Sel Roti</button>
+      <button class="topic" type="button" data-topic="Chocolate Cake" aria-pressed="false">Chocolate Cake</button>
+      <button class="topic" type="button" data-topic="Paneer Curry" aria-pressed="false">Paneer Curry</button>
+    </div>
+
+    <div class="reqs">
+      <span class="req">120–150 words</span>
+      <span class="req">One topic</span>
+      <span class="req">Numbered steps</span>
+      <span class="req">Model format</span>
+    </div>
+
+    <div class="checklist">
+      <h3>Examiner's lens — tick all six before submitting <span class="count"></span></h3>
+      <label class="check"><input type="checkbox"><span>Logical sequencing of steps</span></label>
+      <label class="check"><input type="checkbox"><span>Use of imperative verbs</span></label>
+      <label class="check"><input type="checkbox"><span>Consistency of tense</span></label>
+      <label class="check"><input type="checkbox"><span>Accuracy of measurements</span></label>
+      <label class="check"><input type="checkbox"><span>Formal, neutral tone</span></label>
+      <label class="check"><input type="checkbox"><span>Neat paragraphing</span></label>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-k">Pro tip</div>
+      <div>Before submitting, check whether your method uses clear sequencing words and whether each step logically follows the previous one.</div>
+    </div>
+  </section>
+
+  <!-- ============ CHAPTER 04 ============ -->
+  <section class="sheet" id="bench">
+    <header class="sec-head">
+      <span class="kicker">Chapter 04 · The tool</span>
+      <h2>The Drafting Bench</h2>
+      <p class="sec-intro">Type your recipe here the way you'd write it in your notebook — a title and ingredients on the first lines, then numbered steps. The bench follows along.</p>
+    </header>
+
+    <p class="bench-topic">Drafting · <strong id="bench-topic" class="muted">pick a topic above</strong></p>
+
+    <div class="bench">
+      <div class="bench-main">
+        <textarea id="draft" aria-label="Recipe draft" placeholder="How to Make Chicken Momo&#10;&#10;Ingredients: …&#10;&#10;1. First, …&#10;2. Next, …&#10;3. Then, …"></textarea>
+        <div class="bench-foot">
+          <span class="autosave">Draft saves automatically in this browser</span>
+          <button class="btn-clear" type="button" id="clear-draft">Clear draft</button>
+        </div>
+      </div>
+
+      <div class="bench-side">
+        <div class="b-stat">
+          <span class="k">Word count · target 120–150</span>
+          <span class="v"><span id="wc">000</span> <small>/ 150</small></span>
+          <div class="meter"><div class="meter-zone"></div><div class="meter-fill" id="meter"></div></div>
+          <span class="band" id="band">Not started</span>
+        </div>
+
+        <div class="b-stat">
+          <span class="k">Numbered steps</span>
+          <span class="v"><span id="sc">00</span></span>
+          <span class="b-sub" id="sc-sub">Lines beginning "1.", "2."… count as steps</span>
+        </div>
+
+        <div class="b-stat">
+          <span class="k">Sequencing chain</span>
+          <div class="chips" id="seqchips">
+            <span class="chip" data-seq="First">First</span>
+            <span class="chip" data-seq="Next">Next</span>
+            <span class="chip" data-seq="Then">Then</span>
+            <span class="chip" data-seq="After that">After that</span>
+            <span class="chip" data-seq="Finally">Finally</span>
+          </div>
+        </div>
+
+        <div class="b-verdict" id="verdict">Start typing — the bench counts as you go.</div>
+      </div>
+    </div>
+
+    <p class="bench-note">Verb matching is a rough guide — sixty-odd common kitchen verbs. Trust your judgment over the machine.</p>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <p>Developed by <strong>Nabaraj Dhungana</strong></p>
+    <p class="footer-tag">The Grammar Press — recipe writing studio</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// ---------- Toast ----------
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ---------- Model recipe selector ----------
+const segBtns = document.querySelectorAll('.seg-btn');
+const panels = document.querySelectorAll('.example-panel');
+segBtns.forEach(btn => btn.addEventListener('click', () => {
+  segBtns.forEach(b => {
+    const on = b === btn;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on);
+  });
+  panels.forEach(p => p.classList.toggle('show', p.id === btn.dataset.recipe));
+}));
+
+// ---------- Annotation toggle ----------
+const modelsWrap = document.getElementById('models-wrap');
+const annotToggle = document.getElementById('annot-toggle');
+annotToggle.addEventListener('change', () => {
+  modelsWrap.classList.toggle('annotated', annotToggle.checked);
+});
+
+// ---------- Checklist counter ----------
+document.querySelectorAll('.checklist').forEach(list => {
+  const boxes = Array.from(list.querySelectorAll('input[type="checkbox"]'));
+  const count = list.querySelector('.count');
+  const upd = () => count.textContent = boxes.filter(b => b.checked).length + ' / ' + boxes.length;
+  boxes.forEach(b => b.addEventListener('change', upd));
+  upd();
+});
+
+// ---------- Topic selection ----------
+const topicBtns = document.querySelectorAll('.topic');
+const benchTopic = document.getElementById('bench-topic');
+function selectTopic(btn) {
+  topicBtns.forEach(b => {
+    const on = b === btn;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on);
+  });
+  benchTopic.textContent = btn.dataset.topic;
+  benchTopic.classList.remove('muted');
+  localStorage.setItem('tgp-recipe-topic', btn.dataset.topic);
+}
+topicBtns.forEach(b => b.addEventListener('click', () => selectTopic(b)));
+const savedTopic = localStorage.getItem('tgp-recipe-topic');
+const savedBtn = savedTopic && Array.from(topicBtns).find(b => b.dataset.topic === savedTopic);
+if (savedBtn) selectTopic(savedBtn);
+
+// ---------- Drafting bench ----------
+const VERBS = new Set(('add,allow,arrange,bake,beat,blend,boil,break,bring,brush,check,chill,chop,combine,continue,cook,cool,cover,crush,cut,decorate,dip,dissolve,drain,dry,dust,fill,flip,fold,fry,garnish,grate,grease,grill,grind,heat,keep,knead,layer,let,marinate,mash,melt,mix,peel,place,pour,preheat,prepare,press,prick,reduce,remove,rest,rinse,roll,salt,saute,sauté,scatter,scrape,season,serve,shape,simmer,sprinkle,spread,squeeze,steam,steep,stir,strain,take,taste,tenderize,toast,toss,transfer,turn,whisk,wipe,wrap').split(','));
+
+const SEQS = [
+  ['First',      /\bfirst\b/i],
+  ['Next',       /\bnext\b/i],
+  ['Then',       /\bthen\b/i],
+  ['After that', /\bafter that\b/i],
+  ['Finally',    /\bfinally\b/i]
+];
+const SEQMAP = Object.fromEntries(SEQS);
+// Strip leading sequencers longest-first when checking a step's first verb
+const SEQ_LEADS = ['after that', 'first', 'next', 'then', 'finally'];
+
+const ta       = document.getElementById('draft');
+const wcEl     = document.getElementById('wc');
+const meterEl  = document.getElementById('meter');
+const bandEl   = document.getElementById('band');
+const scEl     = document.getElementById('sc');
+const scSubEl  = document.getElementById('sc-sub');
+const verdictEl= document.getElementById('verdict');
+const chipEls  = document.querySelectorAll('#seqchips .chip');
+
+function wordCount(t) {
+  if (!t.trim()) return 0;
+  return t.trim().split(/\s+/).filter(w => /[a-z0-9]/i.test(w)).length;
+}
+
+function parseSteps(t) {
+  return t.split(/\n+/).map(l => l.trim()).filter(Boolean).map(line => {
+    const m = line.match(/^(\d+)[.)]?\s+(.*)$/);
+    if (!m) return null;
+    let rest = m[2];
+    const lower = rest.toLowerCase();
+    for (const s of SEQ_LEADS) {
+      if (lower.startsWith(s)) { rest = rest.slice(s.length).replace(/^[,\s]+/, ''); break; }
+    }
+    const wm = rest.match(/[a-zA-Z']+/);
+    const first = wm ? wm[0] : null;
+    return { n: +m[1], first, ok: first ? VERBS.has(first.toLowerCase()) : false };
+  }).filter(Boolean);
+}
+
+function update() {
+  const text = ta.value;
+  const words = wordCount(text);
+  const steps = parseSteps(text);
+
+  // Words
+  wcEl.textContent = String(words).padStart(3, '0');
+  meterEl.style.width = Math.min(words / 150, 1) * 100 + '%';
+  meterEl.classList.remove('in', 'over');
+  bandEl.classList.remove('ok', 'bad');
+  if (words === 0) {
+    bandEl.textContent = 'Not started';
+  } else if (words < 120) {
+    bandEl.textContent = (120 - words) + ' to go';
+  } else if (words <= 150) {
+    meterEl.classList.add('in');
+    bandEl.textContent = 'In range';
+    bandEl.classList.add('ok');
+  } else {
+    meterEl.classList.add('over');
+    bandEl.textContent = (words - 150) + ' over';
+    bandEl.classList.add('bad');
+  }
+
+  // Steps
+  scEl.textContent = String(steps.length).padStart(2, '0');
+  if (steps.length) {
+    const okCount = steps.filter(s => s.ok).length;
+    scSubEl.textContent = okCount + ' of ' + steps.length + ' steps open with an imperative verb';
+  } else {
+    scSubEl.textContent = 'Lines beginning "1.", "2."… count as steps';
+  }
+
+  // Sequencer chips
+  const found = [];
+  chipEls.forEach(ch => {
+    const on = SEQMAP[ch.dataset.seq].test(text);
+    ch.classList.toggle('on', on);
+    if (on) found.push(ch.dataset.seq);
+  });
+
+  // Verdict
+  verdictEl.className = 'b-verdict';
+  if (!text.trim()) {
+    verdictEl.textContent = 'Start typing — the bench counts as you go.';
+  } else {
+    const issues = [];
+    if (words < 120) {
+      issues.push((120 - words) + ' more word' + (120 - words === 1 ? '' : 's') + ' needed to reach the minimum.');
+    } else if (words > 150) {
+      issues.push((words - 150) + ' word' + (words - 150 === 1 ? '' : 's') + ' over the limit — practise economy of language.');
+    }
+    if (!steps.length) {
+      issues.push('No numbered steps detected. Begin each step with "1.", "2.", "3."…');
+    } else {
+      steps.filter(s => !s.ok).forEach(s => {
+        issues.push('Step ' + s.n + ' opens with "' + (s.first || '—') + '" — lead with an imperative verb.');
+      });
+    }
+    const missing = SEQS.filter(([l]) => !found.includes(l)).map(([l]) => l);
+    if (missing.length) {
+      issues.push('Sequencing chain incomplete — missing ' + missing.join(', ') + '.');
+    }
+
+    if (!issues.length) {
+      verdictEl.classList.add('ok');
+      verdictEl.textContent = '✓ Submission-ready shape — ' + words + ' words, ' + steps.length +
+        ' steps, full sequencing chain, imperative-led. One last pass against the examiner\u2019s lens above.';
+    } else {
+      verdictEl.classList.add('warn');
+      verdictEl.innerHTML = '<ul>' + issues.map(i => '<li>' + i + '</li>').join('') + '</ul>';
+    }
+  }
+
+  localStorage.setItem('tgp-recipe-draft', text);
+}
+
+ta.addEventListener('input', update);
+ta.value = localStorage.getItem('tgp-recipe-draft') || '';
+update();
+
+// ---------- Clear draft (two-step inline confirm, no popups) ----------
+const clearBtn = document.getElementById('clear-draft');
+let armed = false, disarmT;
+function disarm() {
+  armed = false;
+  clearBtn.textContent = 'Clear draft';
+  clearBtn.classList.remove('armed');
+}
+clearBtn.addEventListener('click', () => {
+  if (!armed) {
+    armed = true;
+    clearBtn.textContent = 'Click again to confirm';
+    clearBtn.classList.add('armed');
+    disarmT = setTimeout(disarm, 2600);
+    return;
+  }
+  clearTimeout(disarmT);
+  disarm();
+  ta.value = '';
+  localStorage.removeItem('tgp-recipe-draft');
+  update();
+  showToast('Draft cleared.');
+});
+
+// ---------- Reading progress bar ----------
+const bar = document.getElementById('progress');
+const setProgress = () => {
+  const d = document.documentElement;
+  const max = d.scrollHeight - d.clientHeight;
+  bar.style.width = max > 0 ? (d.scrollTop / max * 100) + '%' : '0%';
+};
+document.addEventListener('scroll', setProgress, { passive: true });
+setProgress();
+
+// ---------- Active nav link ----------
+const navLinks = Array.from(document.querySelectorAll('.nav-link'));
+const setActive = id => navLinks.forEach(l =>
+  l.classList.toggle('active', l.getAttribute('href') === '#' + id)
+);
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => { if (en.isIntersecting) setActive(en.target.id); });
+}, { rootMargin: '-35% 0px -60% 0px' });
+document.querySelectorAll('main section[id]').forEach(s => io.observe(s));
+</script>
+
+</body>
+</html>

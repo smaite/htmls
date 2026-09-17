@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>The Grammar Press — Grammar, taught plainly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------- Tokens (same system as the lesson page) ---------- */
+:root {
+  --paper: #F5F1E6;
+  --surface: #FDFBF4;
+  --ink: #262218;
+  --ink-2: #3A3426;
+  --muted: #6E6654;
+  --line: #E5DDC8;
+  --line-2: #CCC0A2;
+  --accent: #A63D18;
+  --accent-dark: #8C3413;
+  --accent-soft: #F2E3D8;
+  --good: #2F6B44;
+  --good-bg: #EDF2E7;
+  --bad: #A63A28;
+  --bad-bg: #F7EDE7;
+  --sand: #F8F2DE;
+  --sand-line: #E0D4AE;
+  --paper-on-dark: #F5F1E6;
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --radius: 10px;
+}
+
+/* ---------- Base ---------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+[id] { scroll-margin-top: 84px; }
+
+body {
+  font: 400 16px/1.65 var(--sans);
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(rgba(38, 34, 24, 0.05) 1px, transparent 0);
+  background-size: 26px 26px;
+}
+::selection { background: var(--accent); color: var(--paper); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.container { max-width: 1060px; margin: 0 auto; padding: 0 22px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+strong { font-weight: 650; }
+
+/* ---------- Nav ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(245, 241, 230, 0.94);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 58px; }
+.brand { display: flex; align-items: center; gap: 9px; text-decoration: none; color: var(--ink); font-weight: 650; font-size: 14.5px; }
+.brand-mark { font-family: var(--serif); font-size: 21px; color: var(--accent); line-height: 1; }
+.nav-links { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.nav-links::-webkit-scrollbar { display: none; }
+.nav-link {
+  font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; padding: 7px 11px; border-radius: 6px;
+  white-space: nowrap; transition: color .15s, background .15s;
+}
+.nav-link:hover { color: var(--ink); background: rgba(38, 34, 24, 0.05); }
+.nav-cta {
+  font: 600 13px var(--sans); background: var(--ink); color: var(--paper);
+  padding: 8px 15px; border-radius: 7px; text-decoration: none; white-space: nowrap;
+  transition: background .15s;
+}
+.nav-cta:hover { background: var(--accent); }
+
+/* ---------- Hero ---------- */
+.hero { padding: 64px 0 44px; }
+.hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 44px; align-items: center; }
+.eyebrow {
+  font: 500 11px var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 18px; display: flex; align-items: center; gap: 12px;
+}
+.eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--accent); }
+.hero h1 {
+  font-family: var(--serif); font-weight: 560; font-size: clamp(2.3rem, 5.5vw, 3.7rem);
+  line-height: 1.07; letter-spacing: -0.015em; margin-bottom: 18px;
+}
+.hero h1 em { color: var(--accent); font-weight: 480; }
+.hero-sub { max-width: 32em; color: var(--muted); font-size: 1.06rem; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 6px 0; margin-top: 26px; font: 500 11px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.hero-meta span + span::before { content: "·"; margin: 0 12px; color: var(--line-2); }
+.hero-fig { width: 168px; flex: none; transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+.hero:hover .hero-fig { transform: rotate(8deg); }
+
+/* ---------- Stats strip ---------- */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; margin: 8px 0 30px; }
+.stat { padding: 20px 24px 18px; border-right: 1px solid var(--line); }
+.stat:last-child { border-right: 0; }
+.stat b { display: block; font-family: var(--serif); font-weight: 580; font-size: 1.9rem; line-height: 1.1; }
+.stat b i { font-style: italic; font-weight: 480; color: var(--accent); }
+.stat span { font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+/* ---------- Sheets ---------- */
+.sheet {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: clamp(24px, 4.5vw, 46px);
+  margin-bottom: 26px;
+  box-shadow: 0 1px 0 rgba(38, 34, 24, 0.02), 0 18px 40px -34px rgba(38, 34, 24, 0.35);
+}
+.sec-head { margin-bottom: 24px; }
+.kicker {
+  font: 500 11px var(--mono); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--accent); display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+}
+.kicker::before { content: ""; width: 26px; height: 1px; background: var(--accent); }
+.sec-head h2 { font-family: var(--serif); font-weight: 580; font-size: clamp(1.55rem, 3vw, 2.05rem); line-height: 1.15; letter-spacing: -0.01em; }
+.sec-intro { color: var(--muted); max-width: 42em; }
+
+/* ---------- Table of contents (book style) ---------- */
+.toc { margin-top: 10px; }
+.toc-row {
+  display: grid; grid-template-columns: 54px 1fr; gap: 16px;
+  width: 100%; text-align: left; appearance: none; background: none; border: 0;
+  font: inherit; color: inherit; cursor: pointer;
+  padding: 17px 10px; border-top: 1px solid var(--line);
+  border-radius: 8px; text-decoration: none;
+  transition: background .15s;
+}
+.toc-row:first-child { border-top: 0; }
+.toc-row:hover { background: rgba(38, 34, 24, 0.035); }
+.toc-no { font: 500 11px var(--mono); letter-spacing: 0.12em; color: var(--muted); padding-top: 7px; }
+.toc-row:hover .toc-no { color: var(--accent); }
+.toc-line { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+.toc-title { font-family: var(--serif); font-weight: 580; font-size: 1.22rem; transition: color .15s; }
+.toc-row:hover .toc-title { color: var(--accent); }
+.toc-leader { flex: 1; border-bottom: 1px dotted var(--line-2); transform: translateY(-4px); min-width: 24px; }
+.toc-meta { font: 500 10.5px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.toc-row.ready .toc-meta { color: var(--accent); }
+.toc-row.ready:hover .toc-meta { text-decoration: underline; text-underline-offset: 3px; }
+.toc-desc { display: block; color: var(--muted); font-size: 0.92rem; margin-top: 3px; }
+
+/* ---------- Method rows ---------- */
+.method { margin-top: 6px; }
+.method-row { display: grid; grid-template-columns: 76px 1fr; gap: 18px; padding: 24px 0; border-top: 1px solid var(--line); }
+.method-row:first-child { border-top: 0; }
+.method-row .no { font: 500 11px var(--mono); letter-spacing: 0.12em; color: var(--accent); padding-top: 6px; }
+.method-row h3 { font-family: var(--serif); font-weight: 580; font-size: 1.3rem; margin-bottom: 6px; }
+.method-row p { color: var(--muted); max-width: 40em; }
+
+/* ---------- Drill (spot the error) ---------- */
+.drill { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.drill-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  padding: 13px 22px; border-bottom: 1px solid var(--line); background: var(--sand);
+}
+.drill-head .lbl { font: 500 10.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.drill-head .pos { font: 500 11px var(--mono); letter-spacing: 0.1em; color: var(--muted); }
+.drill-body { padding: 26px 24px 20px; }
+.drill-sentence { font-family: var(--serif); font-weight: 480; font-size: clamp(1.25rem, 2.6vw, 1.55rem); line-height: 2; margin-bottom: 18px; }
+.word {
+  appearance: none; background: none; border: 0; font: inherit; color: inherit;
+  padding: 1px 5px; margin: 0 1px; border-radius: 5px; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.word:hover { background: var(--accent-soft); }
+.word-static { padding: 1px 2px; }
+.word.miss { background: var(--bad-bg); color: var(--bad); animation: shake .25s ease; }
+.word.hit { background: var(--good-bg); color: var(--good); box-shadow: inset 0 -2px 0 var(--good); cursor: default; }
+.word.hit:hover { background: var(--good-bg); }
+.word:disabled { cursor: default; }
+.word:disabled:hover { background: none; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+
+.drill-feedback { min-height: 54px; font-size: 0.96rem; color: var(--muted); border-top: 1px dashed var(--line-2); padding-top: 14px; }
+.drill-feedback.ok { color: var(--good); }
+.drill-feedback.no { color: var(--bad); }
+.drill-feedback s { text-decoration-color: var(--bad); opacity: 0.65; }
+.drill-actions { display: flex; justify-content: flex-end; margin-top: 6px; }
+.btn {
+  appearance: none; border: 0; cursor: pointer;
+  font: 600 14px var(--sans); background: var(--ink); color: var(--paper);
+  padding: 10px 18px; border-radius: 8px; transition: background .15s;
+}
+.btn:hover { background: var(--ink-2); }
+.btn[hidden] { display: none; }
+
+/* ---------- CTA band ---------- */
+.cta {
+  background: var(--ink); color: var(--paper-on-dark);
+  background-image: radial-gradient(rgba(245, 241, 230, 0.06) 1px, transparent 0);
+  background-size: 22px 22px;
+  border-radius: 14px;
+  padding: clamp(34px, 6vw, 60px);
+  display: flex; justify-content: space-between; align-items: center; gap: 28px; flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+.cta .lbl { font: 500 11px var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--sand); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+.cta .lbl::before { content: ""; width: 26px; height: 1px; background: var(--sand-line); }
+.cta h2 { font-family: var(--serif); font-weight: 560; font-size: clamp(1.6rem, 3.4vw, 2.2rem); line-height: 1.15; margin-bottom: 10px; }
+.cta h2 em { font-weight: 480; color: var(--sand); }
+.cta p { color: rgba(245, 241, 230, 0.72); max-width: 30em; }
+.btn-rust { background: var(--accent); font-size: 15px; padding: 13px 22px; }
+.btn-rust:hover { background: var(--accent-dark); }
+
+/* ---------- Footer ---------- */
+.footer { border-top: 1px solid var(--line); background: var(--paper); }
+.footer-inner {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  padding: 26px 22px 34px; font: 400 13.5px var(--sans); color: var(--muted);
+}
+.footer-inner strong { color: var(--ink); }
+.footer-tag { font: 500 11px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 14px);
+  opacity: 0; background: var(--ink); color: var(--paper);
+  padding: 12px 18px; border-radius: 8px;
+  font: 500 13.5px var(--sans); max-width: min(92vw, 460px); text-align: center;
+  pointer-events: none; z-index: 100;
+  transition: transform .3s cubic-bezier(.2, .8, .2, 1), opacity .3s;
+}
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 30px; }
+  .hero-fig { width: 126px; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat:nth-child(2) { border-right: 0; }
+  .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+}
+@media (max-width: 640px) {
+  .brand span:last-child { display: none; }
+  .hero { padding: 46px 0 34px; }
+  .sheet { padding: 22px 18px; }
+  .toc-row { grid-template-columns: 40px 1fr; padding: 15px 4px; }
+  .toc-leader { display: none; }
+  .toc-line { flex-wrap: wrap; gap: 4px 10px; }
+  .method-row { grid-template-columns: 1fr; gap: 6px; padding: 20px 0; }
+  .footer-inner { flex-direction: column; gap: 6px; }
+}
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top"><span class="brand-mark">§</span><span>The Grammar Press</span></a>
+    <div class="nav-links">
+      <a class="nav-link" href="#contents">Contents</a>
+      <a class="nav-link" href="#method">Method</a>
+      <a class="nav-link" href="#exercise">Exercise</a>
+    </div>
+    <a class="nav-cta" href="instructions-directions.html">Begin →</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">The Grammar Press · A plain-English writing course</p>
+        <h1>Learn the rules.<br>Then break them <em>on purpose.</em></h1>
+        <p class="hero-sub">Every rule explained with a reason, shown beside its bad twin, and drilled until it sticks. No jargon, no guessing — just writing that works.</p>
+        <div class="hero-meta">
+          <span>06 topics</span>
+          <span>01 lesson live</span>
+          <span>exercises in every lesson</span>
+        </div>
+      </div>
+      <!-- Pen nib, in the same line-art family as the lesson page's compass -->
+      <svg class="hero-fig" viewBox="0 0 140 170" aria-hidden="true">
+        <circle cx="70" cy="85" r="64" fill="none" stroke="#CCC0A2" stroke-width="1.5"/>
+        <circle cx="70" cy="85" r="56" fill="none" stroke="#6E6654" stroke-width="1" stroke-dasharray="1 12"/>
+        <path d="M70 22 C 94 22, 106 40, 106 58 C 106 80, 90 100, 78 124 L 70 142 L 62 124 C 50 100, 34 80, 34 58 C 34 40, 46 22, 70 22 Z"
+              fill="#FDFBF4" stroke="#262218" stroke-width="1.5"/>
+        <line x1="44" y1="36" x2="96" y2="36" stroke="#CCC0A2" stroke-width="1"/>
+        <line x1="70" y1="140" x2="70" y2="103" stroke="#262218" stroke-width="1.5"/>
+        <circle cx="70" cy="97" r="5.5" fill="#FDFBF4" stroke="#262218" stroke-width="1.5"/>
+        <path d="M62 124 L70 142 L78 124 Z" fill="#A63D18"/>
+      </svg>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>06</b><span>Topics, start to finish</span></div>
+      <div class="stat"><b>01</b><span>Lesson live today</span></div>
+      <div class="stat"><b>10<i>+</i></b><span>Exercises per lesson</span></div>
+      <div class="stat"><b>12 <i>min</i></b><span>Average read time</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ============ PART 01 · TABLE OF CONTENTS ============ -->
+  <section class="sheet" id="contents">
+    <header class="sec-head">
+      <span class="kicker">Part 01 · The course</span>
+      <h2>Table of Contents</h2>
+      <p class="sec-intro">Six topics, in reading order. Each one builds on the last — start at the top, or jump to whatever's blocking your writing today.</p>
+    </header>
+
+    <div class="toc">
+      <button class="toc-row" type="button" data-pending data-title="Parts of Speech">
+        <span class="toc-no">01</span>
+        <span>
+          <span class="toc-line">
+            <span class="toc-title">Parts of Speech</span>
+            <span class="toc-leader" aria-hidden="true"></span>
+            <span class="toc-meta">In progress</span>
+          </span>
+          <span class="toc-desc">Nouns, verbs, and the jobs words do</span>
+        </span>
+      </button>
+
+      <button class="toc-row" type="button" data-pending data-title="Punctuation">
+        <span class="toc-no">02</span>
+        <span>
+          <span class="toc-line">
+            <span class="toc-title">Punctuation</span>
+            <span class="toc-leader" aria-hidden="true"></span>
+            <span class="toc-meta">In progress</span>
+          </span>
+          <span class="toc-desc">Commas, dashes, and where they really belong</span>
+        </span>
+      </button>
+
+      <button class="toc-row" type="button" data-pending data-title="Tenses &amp; Agreement">
+        <span class="toc-no">03</span>
+        <span>
+          <span class="toc-line">
+            <span class="toc-title">Tenses &amp; Agreement</span>
+            <span class="toc-leader" aria-hidden="true"></span>
+            <span class="toc-meta">In progress</span>
+          </span>
+          <span class="toc-desc">Keeping subjects and verbs in sync</span>
+        </span>
+      </button>
+
+      <button class="toc-row" type="button" data-pending data-title="Sentence Structure">
+        <span class="toc-no">04</span>
+        <span>
+          <span class="toc-line">
+            <span class="toc-title">Sentence Structure</span>
+            <span class="toc-leader" aria-hidden="true"></span>
+            <span class="toc-meta">In progress</span>
+          </span>
+          <span class="toc-desc">Fragments, run-ons, and sentences that flow</span>
+        </span>
+      </button>
+
+      <a class="toc-row ready" href="instructions-directions.html">
+        <span class="toc-no">05</span>
+        <span>
+          <span class="toc-line">
+            <span class="toc-title">Instructions &amp; Directions</span>
+            <span class="toc-leader" aria-hidden="true"></span>
+            <span class="toc-meta">Ready →</span>
+          </span>
+          <span class="toc-desc">Writing steps anyone can follow</span>
+        </span>
+      </a>
+
+      <button class="toc-row" type="button" data-pending data-title="Style &amp; Tone">
+        <span class="toc-no">06</span>
+        <span>
+          <span class="toc-line">
+            <span class="toc-title">Style &amp; Tone</span>
+            <span class="toc-leader" aria-hidden="true"></span>
+            <span class="toc-meta">In progress</span>
+          </span>
+          <span class="toc-desc">Saying it well, not just correctly</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ PART 02 · METHOD ============ -->
+  <section class="sheet" id="method">
+    <header class="sec-head">
+      <span class="kicker">Part 02 · The method</span>
+      <h2>How the Lessons Teach</h2>
+    </header>
+
+    <div class="method">
+      <div class="method-row">
+        <span class="no">No. 01</span>
+        <div>
+          <h3>Explain, don't lecture</h3>
+          <p>Every rule comes with the reason it exists. Rules you understand are rules you keep; rules you memorize are rules you forget by Friday.</p>
+        </div>
+      </div>
+      <div class="method-row">
+        <span class="no">No. 02</span>
+        <div>
+          <h3>Show the bad twin</h3>
+          <p>Each good example sits next to a bad one, annotated with exactly what went wrong. You learn to spot the difference with your own eyes — which is the whole game.</p>
+        </div>
+      </div>
+      <div class="method-row">
+        <span class="no">No. 03</span>
+        <div>
+          <h3>Drill until it sticks</h3>
+          <p>Checklists you can tick, exercises you can click, and one gold-standard test throughout: could a stranger follow your writing and succeed?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PART 03 · EXERCISE ============ -->
+  <section class="sheet" id="exercise">
+    <header class="sec-head">
+      <span class="kicker">Part 03 · Try one now</span>
+      <h2>A Two-Minute Warm-Up</h2>
+      <p class="sec-intro">This is the format every lesson uses — read the sentence, click the word that doesn't belong. Five sentences, no login, no timer.</p>
+    </header>
+
+    <div class="drill">
+      <div class="drill-head">
+        <span class="lbl">Exercise 001 · Spot the error</span>
+        <span class="pos" id="drill-pos">01 / 05</span>
+      </div>
+      <div class="drill-body">
+        <p class="drill-sentence" id="drill-sentence"></p>
+        <p class="drill-feedback" id="drill-feedback">Click the word that doesn't belong.</p>
+        <div class="drill-actions">
+          <button class="btn" type="button" id="drill-next" hidden>Next sentence →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="cta">
+    <div>
+      <p class="lbl">Lesson 05 · Live now</p>
+      <h2>Start with <em>Instructions &amp; Directions.</em></h2>
+      <p>Six principles, two tickable checklists, and four good-vs-bad teardowns — about a twelve-minute read.</p>
+    </div>
+    <a class="btn btn-rust" href="instructions-directions.html">Open the lesson →</a>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <p>Developed by <strong>Nabaraj Dhungana</strong></p>
+    <p class="footer-tag">The Grammar Press — clear writing, taught plainly</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// ---------- Toast ----------
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Pending lessons explain themselves instead of leading nowhere
+document.querySelectorAll('.toc-row[data-pending]').forEach(row => {
+  row.addEventListener('click', () => {
+    showToast('"' + row.dataset.title + '" is still in the drafts pile — new lessons land weekly.');
+  });
+});
+
+// ---------- Spot-the-error drill ----------
+const drills = [
+  {
+    words: ['She', 'gave', 'the', 'book', 'to', 'my', 'brother', 'and', 'I', '.'],
+    err: 8, fix: 'me',
+    note: '"I" is a subject pronoun. After a preposition like "to" you need the object form: "to my brother and <strong>me</strong>."'
+  },
+  {
+    words: ['The', 'list', 'of', 'items', 'are', 'on', 'the', 'desk', '.'],
+    err: 4, fix: 'is',
+    note: 'The subject is "list", not "items" — it\u2019s singular, so the verb must be "is". The words in between never change the agreement.'
+  },
+  {
+    words: ['Neither', 'of', 'the', 'students', 'were', 'late', '.'],
+    err: 4, fix: 'was',
+    note: '"Neither" is singular: "Neither of the students <strong>was</strong> late."'
+  },
+  {
+    words: ['He', 'use', 'to', 'play', 'tennis', 'every', 'weekend', '.'],
+    err: 1, fix: 'used',
+    note: 'The phrase is "used to" — the "d" is silent in speech, but it has to be on the page.'
+  },
+  {
+    words: ['Its', 'a', 'beautiful', 'day', 'for', 'a', 'walk', '.'],
+    err: 0, fix: 'it\u2019s',
+    note: '"It\u2019s" (with apostrophe) means "it is". "Its" without one shows possession — "the dog wagged its tail".'
+  }
+];
+
+const sentenceEl = document.getElementById('drill-sentence');
+const feedbackEl  = document.getElementById('drill-feedback');
+const posEl       = document.getElementById('drill-pos');
+const nextBtn     = document.getElementById('drill-next');
+
+let idx = 0, firstTry = 0, missedThis = false, solved = false;
+
+function renderDrill() {
+  const d = drills[idx];
+  solved = false;
+  missedThis = false;
+
+  posEl.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(drills.length).padStart(2, '0');
+  feedbackEl.className = 'drill-feedback';
+  feedbackEl.textContent = 'Click the word that doesn\u2019t belong.';
+  nextBtn.hidden = true;
+
+  sentenceEl.innerHTML = '';
+  d.words.forEach((w, i) => {
+    // Punctuation isn't clickable
+    if (/^[.,!?;:]+$/.test(w)) {
+      const s = document.createElement('span');
+      s.className = 'word-static';
+      s.textContent = w;
+      sentenceEl.appendChild(s);
+      return;
+    }
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'word';
+    b.textContent = w;
+    b.dataset.i = i;
+    sentenceEl.appendChild(b);
+    sentenceEl.appendChild(document.createTextNode(' '));
+  });
+}
+
+sentenceEl.addEventListener('click', e => {
+  const word = e.target.closest('.word');
+  if (!word || solved) return;
+  const d = drills[idx];
+  const i = Number(word.dataset.i);
+
+  if (i === d.err) {
+    solved = true;
+    if (!missedThis) firstTry++;
+    word.classList.add('hit');
+    sentenceEl.querySelectorAll('.word').forEach(w => w.disabled = true);
+    feedbackEl.className = 'drill-feedback ok';
+    feedbackEl.innerHTML =
+      '\u2713 Caught it. <s>' + d.words[d.err] + '</s> \u2192 <strong>' + d.fix + '</strong>. ' + d.note;
+    nextBtn.hidden = false;
+    nextBtn.textContent = (idx === drills.length - 1) ? 'See how you did' : 'Next sentence \u2192';
+  } else {
+    missedThis = true;
+    word.classList.add('miss');
+    word.addEventListener('animationend', () => word.classList.remove('miss'), { once: true });
+    feedbackEl.className = 'drill-feedback no';
+    feedbackEl.textContent = 'Not that one \u2014 read the sentence aloud and try again.';
+  }
+});
+
+nextBtn.addEventListener('click', () => {
+  idx++;
+  if (idx >= drills.length) {
+    idx = 0;
+    const score = firstTry;
+    firstTry = 0;
+    renderDrill();
+    feedbackEl.className = 'drill-feedback ok';
+    feedbackEl.innerHTML = score === drills.length
+      ? '\u2713 Warm-up complete \u2014 a perfect ' + drills.length + ' out of ' + drills.length + '. The lessons are going to enjoy you.'
+      : 'Warm-up complete \u2014 you caught ' + score + ' of ' + drills.length + ' on the first try. ' +
+        (score >= 3 ? 'Solid instincts; a few more reps and it\u2019s automatic.' : 'Good start \u2014 the full lessons break each of these down slowly.');
+    return;
+  }
+  renderDrill();
+});
+
+renderDrill();
+</script>
+
+</body>
+</html>
